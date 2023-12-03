@@ -74,7 +74,10 @@ aside ul a:hover {
     color: #08c274;
     text-decoration: none;
     transform: scale(1.05);
+}
 
+svg:hover {
+    fill: #08c274;
 }
 
 main .main-head {

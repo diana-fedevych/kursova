@@ -14,10 +14,10 @@ Markov Chain generator
 
 class MarkovChain:
 
-  def __init__(self, num_key_words=2):
+  def __init__(self, num_key_words=3):
     self.num_key_words = num_key_words
     self.lookup_dict = defaultdict(list)
-    self._punctuation_regex = re.compile(r'[,.!;?\:\-\[\]\n]+')
+    self._punctuation_regex = re.compile(r"[«»’—,.!;?\"()\:\-\[\]\n]+")
     self._seeded = False
     self.__seed_me()
 
@@ -36,10 +36,10 @@ class MarkovChain:
   " Build Markov Chain from data source.
   " Use add_file() or add_string() to add the appropriate format source
   """
-  def add_file(self, file_path):
-    content = ''
-    with open(file_path, 'r') as fh:
-      self.__add_source_data(fh.read())
+  # def add_file(self, file_path):
+  #   content = ''
+  #   with open(file_path, 'r') as fh:
+  #     self.__add_source_data(fh.read())
 
   def add_string(self, str):
     self.__add_source_data(str)
@@ -47,6 +47,7 @@ class MarkovChain:
   def __add_source_data(self, str):
     clean_str = self._punctuation_regex.sub(' ', str).lower()
     tuples = self.__generate_tuple_keys(clean_str.split())
+    self.lookup_dict = defaultdict(list)
     for t in tuples:
       self.lookup_dict[t[0]].append(t[1])
 
@@ -61,7 +62,7 @@ class MarkovChain:
   " Generates text based on the data the Markov Chain contains
   " max_length is the maximum number of words to generate
   """
-  def generate_text(self, max_length=20):
+  def generate_text(self, max_length=30):
     context = deque()
     output = []
     if len(self.lookup_dict) > 0:
@@ -85,8 +86,8 @@ class MarkovChain:
     return output
 
 
-mc = MarkovChain()
-mc.add_file('main/text.txt')
+# mc = MarkovChain()
+# mc.add_file('main/text.txt')
 # generated_text = mc.generate_text(max_length=10)
 # generated_sentence = ' '.join(generated_text)
 # print(generated_sentence)

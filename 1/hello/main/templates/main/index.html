@@ -11,21 +11,83 @@ Django Markov Chain Generator
 <div class="main-head">
 <h1>Generation of random texts on Markov chains</h1>
 <button onclick="generateText()">Generate Text</button>
+
 </div>
 <!-- <p id="generatedText"></p> -->
 <div class="gen">
     <textarea name="gen-text" id="generatedText" cols="106" rows="5"></textarea>
 </div>
+<div>
+    <select name="title" id="textSelector">
+        {% for el in texts %}
+            <option value="{{ el.title }}" data-full-text="{{ el.full_text }}">{{ el.title }}</option>
+        {% endfor %}
+    </select>
+</div>
 
+<!-- <div id="fullTextContainer">
+
+</div> -->
+<input type="range" id="r1" min="3" max="36" step="1" oninput="updateSliderValue(this.value)">
+<p id="one"></p>
 
 <script>
-    function generateText() {
-        // AJAX request to Django backend to generate text
-        fetch('/generate_text/')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('generatedText').innerHTML = data.generated_text;
-            });
-    }
+
+// function fun1() {
+//   var rng = document.getElementById('r1'); 
+//   var p = document.getElementById('one'); 
+//   p.innerHTML = rng.value;
+//   generateText(rng.value); // Передача нового значення max_length
+
+// }
+
+//     function generateText() {
+//         var title = document.getElementById('textSelector').value;
+//         console.log(title)
+//         // AJAX request to Django backend to generate text
+//         fetch(`/generate_text/?title=${title}`)
+//             .then(response => response.json())
+//             .then(data => {
+//                 document.getElementById('generatedText').innerHTML = data.generated_text;
+//             });
+//     }
+
+
+
+
+
+var max_length;
+
+function updateSliderValue() {
+    var rng = document.getElementById('r1');
+    var p = document.getElementById('one');
+    max_length = parseInt(rng.value, 10);
+    p.innerHTML = max_length;
+    console.log('updateSliderValue - max_length:', max_length);
+}
+
+function generateTextOnButtonClick() {
+    generateText(max_length);
+}
+
+function generateText(max_length) {
+    console.log('generateText - max_length:', max_length);
+    var title = document.getElementById('textSelector').value;
+    fetch(`/generate_text/?title=${title}&max_length=${max_length}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('generatedText').innerHTML = data.generated_text;
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+
 </script>
 {% endblock %}
